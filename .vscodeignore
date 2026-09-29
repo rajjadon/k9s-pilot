@@ -1,0 +1,21 @@
+# Everything the published extension does not need. esbuild bundles src/ into out/extension.js,
+# so the shipped package is that one file plus media/. Verify with `npx vsce ls` before publishing.
+
+node_modules/**
+src/**
+test/**
+out-test/**
+scripts/**
+esbuild.js
+eslint.config.js
+tsconfig.json
+**/*.map
+
+.github/**
+.vscode/**
+.gitignore
+.vscodeignore
+
+media/icon-source.svg
+**/.git/**
+.DS_Store

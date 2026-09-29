@@ -1,0 +1,159 @@
+{
+  "name": "k9s-pilot",
+  "displayName": "k9s Pilot — one-click cluster connect for k9s",
+  "description": "Pick a Kubernetes cluster by name and drop straight into k9s. Local-first, no account, no telemetry.",
+  "version": "0.0.1",
+  "publisher": "REPLACE_ME",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0",
+    "node": ">=20"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "kubernetes",
+    "k9s",
+    "kubectl",
+    "gke",
+    "devops"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "k9sPilot",
+          "title": "k9s Pilot",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "k9sPilot": [
+        {
+          "id": "k9sPilotClusters",
+          "name": "Clusters"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "k9sPilot.refresh",
+        "title": "Refresh Clusters",
+        "category": "k9s Pilot",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "k9sPilot.connect",
+        "title": "Connect",
+        "category": "k9s Pilot",
+        "icon": "$(play)"
+      },
+      {
+        "command": "k9sPilot.connectChooseNamespace",
+        "title": "Connect (choose namespace)…",
+        "category": "k9s Pilot",
+        "icon": "$(list-selection)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "k9sPilot.refresh",
+          "when": "view == k9sPilotClusters",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "k9sPilot.connectChooseNamespace",
+          "when": "view == k9sPilotClusters && viewItem == k9sPilotCluster",
+          "group": "inline"
+        },
+        {
+          "command": "k9sPilot.connect",
+          "when": "view == k9sPilotClusters && viewItem == k9sPilotCluster",
+          "group": "1_connect"
+        },
+        {
+          "command": "k9sPilot.connectChooseNamespace",
+          "when": "view == k9sPilotClusters && viewItem == k9sPilotCluster",
+          "group": "1_connect"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "k9s Pilot",
+      "properties": {
+        "k9sPilot.aliases": {
+          "type": "object",
+          "default": {},
+          "additionalProperties": {
+            "type": "string"
+          },
+          "markdownDescription": "Friendly display names, keyed by full kubeconfig context name. Example: `{ \"gke_my-project_us-central1_my-cluster\": \"Prod (US)\" }`."
+        },
+        "k9sPilot.groups": {
+          "type": "object",
+          "default": {},
+          "additionalProperties": {
+            "type": "string"
+          },
+          "markdownDescription": "Override the group a context is filed under, keyed by full context name. Defaults to the GKE project name."
+        },
+        "k9sPilot.defaultNamespaces": {
+          "type": "object",
+          "default": {},
+          "additionalProperties": {
+            "type": "string"
+          },
+          "markdownDescription": "Default namespace per context, keyed by full context name. Used the first time you connect; after that the last-used namespace is remembered."
+        },
+        "k9sPilot.k9sPath": {
+          "type": "string",
+          "default": "k9s",
+          "description": "Path to the k9s binary."
+        },
+        "k9sPilot.kubectlPath": {
+          "type": "string",
+          "default": "kubectl",
+          "description": "Path to the kubectl binary."
+        },
+        "k9sPilot.gcloudPath": {
+          "type": "string",
+          "default": "gcloud",
+          "description": "Path to the gcloud binary (used to check auth before connecting to GKE contexts)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc --noEmit -p . && node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "lint": "eslint --no-error-on-unmatched-pattern src test && tsc --noEmit -p .",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "node scripts/run-unit-tests.mjs",
+    "test:integration": "npm run compile && tsc -p . --outDir out-test && node out-test/test/integration/runTests.js",
+    "vscode:prepublish": "npm run lint && node esbuild.js --production",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.9",
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/parser": "^8.15.0",
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^3.2.1",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.15.0",
+    "mocha": "^10.7.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}
